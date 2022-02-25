@@ -76,8 +76,27 @@ fn hit_and_blow(act_number: [u8; 3], think_number: [u8; 3]) -> HitBlow {
     }
 }
 
+fn rand_gen() -> u8 {
+    use rand::{thread_rng, Rng};
+
+    thread_rng().gen_range(0..10)
+}
+
 fn rand_nums() -> [u8; 3] {
-    [0, 1, 2]
+    let n1 = rand_gen();
+    let n2 = loop {
+        let r = rand_gen();
+        if n1 != r {
+            break r;
+        }
+    };
+    let n3 = loop {
+        let r = rand_gen();
+        if n1 != r && n2 != r {
+            break r;
+        }
+    };
+    [n1, n2, n3]
 }
 
 fn read_nums() -> [u8; 3] {
