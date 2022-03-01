@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter, Result};
+
 fn readln() -> String {
     let mut s = String::new();
     std::io::stdin().read_line(&mut s).unwrap();
@@ -7,25 +9,23 @@ fn readln() -> String {
 pub fn arg() {}
 
 pub fn run(_: ()) {
-    println!("hit your number");
+    println!("hit your number.");
     let your_number = read_nums();
     let my_number = rand_nums();
 
-    println!("-- hit & blow --");
+    println!("-- hit & blow game start --");
     loop {
-        println!("think my number");
         let think_number = read_nums();
-        let hb = hit_and_blow(my_number, think_number);
-        println!("you think: {}", hb);
+        let hb = hit_and_blow(&my_number, &think_number);
+        println!("Y:{} {}", think_number, hb);
         if hb.is_end() {
             println!("you win");
             break;
         }
 
-        println!("I think your number");
         let think_number = rand_nums();
-        let hb = hit_and_blow(your_number, think_number);
-        println!("I think: {}", hb);
+        let hb = hit_and_blow(&your_number, &think_number);
+        println!("I:{} {}", think_number, hb);
         if hb.is_end() {
             println!("I win");
             break;
@@ -33,35 +33,60 @@ pub fn run(_: ()) {
     }
 }
 
+#[derive(PartialEq)]
+struct Numbers(u8, u8, u8);
+
+impl Numbers {
+    fn new(i: u8, j: u8, k: u8) -> Numbers {
+        Numbers(i, j, k)
+    }
+
+    fn position(&self, value: u8) -> Option<usize> {
+        match value {
+            i if self.0 == i => Some(0),
+            i if self.1 == i => Some(1),
+            i if self.2 == i => Some(2),
+            _ => None,
+        }
+    }
+
+    fn iter(&self) -> impl IntoIterator<Item = u8> {
+        [self.0, self.1, self.2]
+    }
+}
+
+impl Display for Numbers {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "{}{}{}", self.0, self.1, self.2)
+    }
+}
+
 struct HitBlow {
-    thinked: [u8; 3],
     hit: u8,
     blow: u8,
 }
 
 impl HitBlow {
+    fn new(hit: u8, blow: u8) -> Self {
+        HitBlow { hit, blow }
+    }
     fn is_end(&self) -> bool {
         self.hit == 3
     }
 }
 
-use std::fmt::{Display, Result};
 impl Display for HitBlow {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result {
-        write!(
-            f,
-            "Think: {}{}{}, Hit: {}, Blow: {}",
-            self.thinked[0], self.thinked[1], self.thinked[2], self.hit, self.blow
-        )
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "H: {}, B: {}", self.hit, self.blow)
     }
 }
 
-fn hit_and_blow(act_number: [u8; 3], think_number: [u8; 3]) -> HitBlow {
+fn hit_and_blow(act_number: &Numbers, think_number: &Numbers) -> HitBlow {
     let mut hit = 0;
     let mut blow = 0;
-    for i in 0..3 {
-        if think_number.contains(&act_number[i]) {
-            if think_number[i] == act_number[i] {
+    for (i, a) in act_number.iter().into_iter().enumerate() {
+        if let Some(t) = think_number.position(a) {
+            if i == t {
                 hit += 1;
             } else {
                 blow += 1;
@@ -69,11 +94,7 @@ fn hit_and_blow(act_number: [u8; 3], think_number: [u8; 3]) -> HitBlow {
         }
     }
 
-    HitBlow {
-        thinked: think_number,
-        hit,
-        blow,
-    }
+    HitBlow::new(hit, blow)
 }
 
 fn rand_gen() -> u8 {
@@ -82,7 +103,7 @@ fn rand_gen() -> u8 {
     thread_rng().gen_range(0..10)
 }
 
-fn rand_nums() -> [u8; 3] {
+fn rand_nums() -> Numbers {
     let n1 = rand_gen();
     let n2 = loop {
         let r = rand_gen();
@@ -96,14 +117,14 @@ fn rand_nums() -> [u8; 3] {
             break r;
         }
     };
-    [n1, n2, n3]
+    Numbers::new(n1, n2, n3)
 }
 
-fn read_nums() -> [u8; 3] {
+fn read_nums() -> Numbers {
     loop {
-        if let Some(nums) = read_num(readln()) {
-            if nums[0] != nums[1] && nums[1] != nums[2] && nums[2] != nums[0] {
-                break nums;
+        if let Some([x, y, z]) = read_num(readln()) {
+            if x != y && y != z && z != x {
+                break Numbers(x, y, z);
             }
         }
         println!("hit only 3 numbers");
