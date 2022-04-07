@@ -23,9 +23,9 @@ impl HBAnswer {
     }
 }
 
-use std::fmt::{Display, Formatter, Result};
-impl Display for HBAnswer {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+use std::fmt;
+impl fmt::Display for HBAnswer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "H: {}, B: {}", self.hit, self.blow)
     }
 }
