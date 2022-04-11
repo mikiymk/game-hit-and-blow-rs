@@ -10,11 +10,11 @@ impl<const N: usize> Three<N> {
 }
 
 impl<const N: usize> TryFrom<&str> for Three<N> {
-    type Error = String;
+    type Error = Box<dyn Error>;
     fn try_from(value: &str) -> Result<Three<N>, Self::Error> {
         let mut vec = Vec::new();
         for char in value.chars() {
-            vec.push(char.parse()?);
+            vec.push(to_num(char)?);
         }
 
         Ok(Self::new(vec.try_into()?))
@@ -38,5 +38,22 @@ impl<const N: usize> HBNumber for Three<N> {
     }
     fn nums(&self) -> &[u8] {
         &self.0
+    }
+}
+
+
+fn to_num(c: char) -> Result<u8, String> {
+    match c {
+        '0' => Ok(0),
+        '1' => Ok(1),
+        '2' => Ok(2),
+        '3' => Ok(3),
+        '4' => Ok(4),
+        '5' => Ok(5),
+        '6' => Ok(6),
+        '7' => Ok(7),
+        '8' => Ok(8),
+        '9' => Ok(9),
+        c => Err(format!("{} is not number.", c)),
     }
 }
