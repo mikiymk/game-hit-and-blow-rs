@@ -10,7 +10,7 @@ impl<const N: usize> Three<N> {
 }
 
 impl<const N: usize> TryFrom<&str> for Three<N> {
-    type Error = Box<dyn Error>;
+    type Error = Box<dyn std::error::Error>;
     fn try_from(value: &str) -> Result<Three<N>, Self::Error> {
         let mut vec = Vec::new();
         for char in value.chars() {
