@@ -11,7 +11,7 @@ impl<const N: usize> Three<N> {
 
 impl<const N: usize> TryFrom<&str> for Three<N> {
     type Error = String;
-    fn try_from(value: &str) -> Result<Three, Self::Error> {
+    fn try_from(value: &str) -> Result<Three<N>, Self::Error> {
         let mut vec = Vec::new();
         for char in value.chars() {
             vec.push(char.parse()?);
