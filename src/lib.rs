@@ -25,7 +25,7 @@ pub fn run(_: Args) {
         let think_number = read_nums();
         let hb = hit_and_blow(&my_number, &think_number);
         println!("Y:{} {}", think_number, hb);
-        if hb.is_end::<Three>() {
+        if hb.is_end::<Three<3>>() {
             println!("you win");
             break;
         }
@@ -33,7 +33,7 @@ pub fn run(_: Args) {
         let think_number = rand_nums();
         let hb = hit_and_blow(&your_number, &think_number);
         println!("I:{} {}", think_number, hb);
-        if hb.is_end::<Three>() {
+        if hb.is_end::<Three<3>>() {
             println!("I win");
             break;
         }
