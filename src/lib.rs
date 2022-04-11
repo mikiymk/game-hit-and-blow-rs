@@ -11,9 +11,11 @@ fn readln() -> String {
     s.trim_end().to_string()
 }
 
-pub fn arg() {}
+struct Args;
 
-pub fn run(_: ()) {
+pub fn arg() -> Args { Args }
+
+pub fn run(_: Args) {
     println!("hit your number.");
     let your_number = read_nums();
     let my_number = rand_nums();
@@ -38,7 +40,7 @@ pub fn run(_: ()) {
     }
 }
 
-fn hit_and_blow(act_number: &Three, think_number: &Three) -> HBAnswer {
+fn hit_and_blow<const N: usize>(act_number: &Three<N>, think_number: &Three<N>) -> HBAnswer {
     let mut hit = 0;
     let mut blow = 0;
     for (i, a) in act_number.nums().into_iter().enumerate() {
@@ -60,7 +62,7 @@ fn rand_gen() -> u8 {
     num % 10
 }
 
-fn rand_nums() -> Three {
+fn rand_nums() -> Three<3> {
     let n1 = rand_gen();
     let n2 = loop {
         let r = rand_gen();
@@ -74,10 +76,10 @@ fn rand_nums() -> Three {
             break r;
         }
     };
-    Three::new(n1, n2, n3)
+    Three::new([n1, n2, n3])
 }
 
-fn read_nums() -> Three {
+fn read_nums<const N: usize>() -> Three<N> {
     loop {
         let read = readln();
         match TryFrom::<&str>::try_from(&read) {
