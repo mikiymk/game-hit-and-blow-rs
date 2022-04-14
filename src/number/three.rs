@@ -17,7 +17,7 @@ impl<const N: usize> TryFrom<&str> for Three<N> {
             vec.push(to_num(char)?);
         }
 
-        Ok(Self::new(vec.try_into()?))
+        Ok(Self::new(vec.try_into().map_err(|e| format!("{e:?}"))?))
     }
 }
 
