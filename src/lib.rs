@@ -11,7 +11,7 @@ fn readln() -> String {
     s.trim_end().to_string()
 }
 
-struct Args;
+pub struct Args;
 
 pub fn arg() -> Args { Args }
 
